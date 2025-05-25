@@ -1,6 +1,23 @@
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-<beans>
+
+    <!-- Advice -->
+    <bean id="performanceTimingAdvice"
+        class="se.yrgo.advice.PerformanceTimingAdvice" />
+    <aop:config>
+        <aop:aspect ref="performanceTimingAdvice">
+            <aop:around method="performTimingMeasurement"
+                pointcut="execution (* se.yrgo.services..*.* (..) ) || execution (* se.yrgo.dataaccess..*.* (..) ) " />
+            <aop:before method="beforeAdviceTesting"
+                pointcut="execution (* se.yrgo.services..*.* (..) ) || execution (* se.yrgo.dataaccess..*.* (..) )" />
+        </aop:aspect>
+    </aop:config>
+
+
     <bean id="CustomerManagementService"
         class="se.yrgo.services.customers.CustomerManagementMockImpl">
     </bean>
@@ -9,7 +26,7 @@
     </bean>
     <!-- add your bean definitions here! -->
 
-    
+
     <bean id="CallHandlingService" class="se.yrgo.services.calls.CallHandlingServiceImpl">
         <constructor-arg ref="CustomerManagementService" />
         <constructor-arg ref="DiaryManagementService" />
